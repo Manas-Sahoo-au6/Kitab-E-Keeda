@@ -17,7 +17,7 @@ const bufferToString = require('../../fileUpload/bufferToString/bufferToString')
 // requiring all for mail verification code 
 const nodemailer = require('nodemailer')
 var cryptoRandomString = require('crypto-random-string')
-var otp = {};
+var otp = { userotp : 0 };
 
 
 module.exports = {
@@ -207,6 +207,23 @@ module.exports = {
                 if(err) console.log(err)
             })
             res.send("you have followed")
+        }catch(err){
+            console.log(err)
+        }
+    },
+    async verifyUser(req, res){
+        try{
+            const { userId }  =req.params
+            const { code } = req.headers
+            Code = parseInt(code)
+            const foundUser = await User.findById(userId)
+            if(!foundUser) return res.status(400).send("invalid credentials")
+            else if(typeof(Code) !== 'number') return res.send("code format mismatched")
+            else if(Code == otp.userOtp ) {
+                const foundUser = await User.findOneAndUpdate({ _id : userId }, { verified : true })
+                if(!foundUser) return res.status(400).send("invalid credentials")
+                res.status(200).json({ msg : "code verified" })
+            }else return res.send("code didnt match")
         }catch(err){
             console.log(err)
         }

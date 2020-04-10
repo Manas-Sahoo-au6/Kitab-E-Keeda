@@ -3,7 +3,7 @@ const { loggedUser } = require('../../middlewares/loggedUser')
 const { updateProfile } = require('../../middlewares/updateProfile')
 const { followedUser } = require('../../middlewares/followedUser')
 const { authenticate } = require('../../middlewares/authenticate')
-const { registerUser, loginUser, logoutUser, addProfile,sendOtp,verifyOtp,followUser } = require('../../controllers/apiControllers/userApiController')
+const { registerUser, loginUser, logoutUser, addProfile,sendOtp,verifyOtp,followUser,verifyUser } = require('../../controllers/apiControllers/userApiController')
 const upload = require('../../fileUpload/multer/multer')
 
 
@@ -14,5 +14,6 @@ router.post('/user/profile/:userId', updateProfile, upload.single("uploadImage")
 router.post('/user/verify/sendotp' , sendOtp)
 router.post('/user/verify/verifyotp' , verifyOtp) 
 router.post('/follow/:follower/:following',authenticate,followedUser, followUser)
+router.post('/verify/:userId', verifyUser)
 
 module.exports = router
