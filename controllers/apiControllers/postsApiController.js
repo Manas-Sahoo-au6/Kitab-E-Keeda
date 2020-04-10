@@ -103,5 +103,89 @@ module.exports = {
         } catch (err) {
             console.log(err)
         }
+    },
+    async updatePosts(req, res){
+        try{
+            const { userId, postId } = req.params
+            const { post } = req.headers
+            const foundPost = await Post.findOneAndUpdate({ _id : postId, user : userId }, { post })
+            if(!foundPost) return res.status(400).send("invalid credentials")
+            res.json({msg : "post updated successfully", resp })
+        }catch(err){
+            console.log(err)
+        }
+    },
+
+    async deletePosts(req, res){
+        try{
+            const { userId, postId } = req.params
+            const foundPost = await Post.findOneAndDelete({ _id : postId, userId })
+            if(!foundPost) return res.status(400).send("invalid credentials")
+            else if(resp !== null ) res.json({msg : "post deleted successfully", resp })
+            else return res.status(200).send("nothing to delete")
+            Comment.deleteMany({ postId, userId }).exec((err, _)=>{
+                if(err) console.log(err.message)
+                console.log("comment related to post deleted")
+            })
+            Like.deleteMany({ postId, userId }).exec((err, _)=>{
+                if(err) console.log(err.message)
+                console.log("likes related to the post has been deleted")
+            })
+        }catch(err){
+            console.log(err)
+        }
+    },
+
+    async updateComments(req, res){
+        try{
+            const { userId, commentId } = req.params
+            const { comment } = req.headers
+            const foundComment = await Comment.findOneAndUpdate({ _id : commentId, userId }, { comment })
+            if(!foundComment) return res.status(400).send("invalid credntials")
+            res.json({ msg : "comment updated successfully ", resp })
+        }catch(err){
+            console.log(err)
+        }
+    },
+
+    async deleteComments(req, res){
+        try{
+            const { userId, commentId } = req.params
+            const foundComment = await Comment.findOneAndDelete({ _id : commentId })
+            if(!foundComment) return res.send("invalid credentials")
+            else if(resp !== null ) res.json({msg:"comment deleted successfully", resp})
+            else return res.status(200).send("nothing to delete")
+            Thread.deleteMany({ commentId, userId }).exec((err, _)=>{
+                if(err) console.log(err)
+                console.log("threads under the comment deleted successfully")
+            })
+        }catch(err){
+            console.log(err)
+        }
+    },
+
+    async updateThreads(req, res){
+        try{
+            const { userId, threadId } = req.params
+            const { thread } = req.headers
+            const foundThread = await Thread.findOneAndUpdate({ _id : threadId ,userId }, { thread})
+            if(!foundThread) return res.send("invalid credentials")
+            res.json({ msg: "thread updated successfully", resp })
+        }catch(err){
+            console.log(err)
+        }
+    },
+
+    async deleteThreads(req, res){
+        try{
+            const { userId, threadId } = req.params
+            Thread.findByIdAndDelete({ _id : threadId, userId }).exec((err, resp)=>{
+                if(err) return res.send("invalid credentials")
+                else if(resp !== null) return res.json({msg : "thread deleted successfully", resp})
+                else return res.send("nothing to delete") 
+            })
+        }catch(err){
+            console.log(err)
+        }
     }
 }

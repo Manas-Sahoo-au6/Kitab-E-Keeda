@@ -8,7 +8,9 @@ const {
     getallGenres,
     getAllBooks,
     getFavBooks,
-    getFavAuthors
+    getFavAuthors,
+    updateReview,
+    deleteReview
 } = require('../../controllers/apiControllers/booksApiController')
 
 const { authenticate } = require('../../middlewares/authenticate')
@@ -25,6 +27,12 @@ router.get('/user/genres/:userID', getallGenres)
 router.get('/user/FavAuthors/:userID', getFavAuthors)
 router.get('/user/FavBooks/:userID', getFavBooks)
 router.get('/search/:bookId', getSearchedBook)
+
+
+//update and delteing reviews
+
+router.put('/updateReview/:userId/:reviewId', authenticate, updateReview )
+router.delete('/deleteReview/:userId/:reviewId', authenticate, deleteReview)
 
 
 
